@@ -1,0 +1,126 @@
+to do
+  right 90
+  hideturtle
+
+  make "leni 25
+  make "cell 20
+
+  make "tip 200
+  make "num int (:cell+2)/2
+  setactivearea (list -(:leni*:num) -((:leni+0.1)*(:num+1)) ((:leni+0.1)*(:num+1)) (:leni*:num))
+
+  make "body (array :cell+2 0)
+  make "new (array :cell+2 0)
+  for [dot 0 :cell+1 1] [setitem :dot :new 0]
+  setitem 0 :body :new
+
+  for [line 1 :cell 1] [
+    make "nw_point (array :cell+2 0)
+    setitem 0 :nw_point 0
+    for [cel 1 :cell 1] [
+      setitem :cel :nw_point random 2
+    ]
+    setitem :cell+1 :nw_point 0
+    setitem :line :body :nw_point
+  ]
+
+  make "new1 (array :cell+2 0)
+  for [dot1 0 :cell+1 1] [setitem :dot1 :new1 0]
+  setitem :cell+1 :body :new1
+
+  make "Next_gen (array :cell+2 0)
+  for [a 0 :cell+1 1] [
+    setitem :a :Next_gen (array :cell+2 0)
+    for [b 0 :cell+1 1] [
+      setitem :b item :a :Next_gen item :b item :a :body
+    ]
+  ]
+  
+  make "poi :leni  *int (:cell+2)/2
+  penup
+  setpos list -:poi :poi
+  pendown
+  for [m 0 :cell+1 1] [
+    penup
+    setpos list -:poi :poi+(:m+1)*-:leni
+    pendown
+    for [n 0 :cell+1 1] [
+      test 1 = item :n item :m :Next_gen
+      iftrue [ 
+        square_t 0 
+        forward :leni 
+      ] 
+      iffalse [ 
+        square_t 7 
+        forward :leni 
+      ]
+    ]
+  ]
+
+  for [mm 0 :tip 1] [
+    for [i 1 :cell 1] [
+      for [j 1 :cell 1] [
+        make "row1 (item :j-1 item :i-1 :body) + (item :j item :i-1 :body) + (item :j+1 item :i-1 :body)
+        make "row2 (item :j-1 item :i :body) + (item :j+1 item :i :body)
+        make "row3 (item :j-1 item :i+1 :body) + (item :j item :i+1 :body) + (item :j+1 item :i+1 :body)
+
+        make "neigh :row1 + :row2 + :row3
+        
+        test 1 = item :j item :i :body
+        iftrue [
+          test or :neigh < 2 :neigh > 3
+          iftrue [
+            setitem :j item :i :Next_gen 0 
+
+            penup
+            setpos list -(:poi-:j*:leni) :poi+(:i+1)*-:leni 
+            pendown
+            square_t1 7
+          ]
+        ]
+        test 1 = item :j item :i :body
+        iffalse [
+          test :neigh = 3
+          iftrue [
+            setitem :j item :i :Next_gen 1
+       
+            penup
+            setpos list -(:poi-:j*:leni) :poi+(:i+1)*-:leni 
+            pendown
+            square_t1 0
+          ]
+        ]        
+      ]
+    ]
+    for [g 0 :cell+1 1] [
+      for [h 0 :cell+1 1] [
+        setitem :h item :g :body item :h item :g :Next_gen
+      ]
+    ]
+  ]
+  showturtle
+end
+
+to square_t :num
+  make "x xcor
+  make "y ycor
+  setpencolor 15
+  setpos list :x+:leni :y
+  setpos list :x+:leni :y+:leni
+  setpos list :x :y+:leni
+  setpos list :x :y
+
+  setfloodcolor :num
+  setpencolor :num
+  setpos list :x+(:leni/2) :y+(:leni/2)
+  fill
+  setpos list :x :y
+  setpencolor 0
+end
+
+to square_t1 :num
+  setfloodcolor :num
+  setpencolor :num
+  setpos list xcor+(:leni/2) ycor+(:leni/2)
+  fill
+end

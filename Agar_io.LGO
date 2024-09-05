@@ -1,0 +1,334 @@
+to box
+  ;----------------------------
+  ;Code for making the box
+  ;----------------------------
+  setpencolor 0
+  setfloodcolor 0
+  ;----------------------------
+  penup
+  setpos list -:wei-30 -:hei-30
+  pendown
+  repeat 2[
+    forward (:wei+30)*2 
+    left 90
+    forward (:hei+30)*2
+    left 90]
+  ;----------------------------
+  penup
+  setpos list -:wei-40 -:hei-40
+  pendown
+  repeat 2[
+    forward (:wei+40)*2
+    left 90
+    forward (:hei+40)*2
+    left 90]
+  ;----------------------------
+  left 10 forward 5
+  fill 
+  back 5 right 10
+  ;----------------------------
+end
+
+to check
+  ;---------------------------------------------------------------
+  ;Checking for the first Player
+  ;---------------------------------------------------------------
+  for [i 1 :targets 1] [
+    setturtle :i
+    make "tar1_x xcor
+    make "tar1_y ycor
+    ;------------------------------------------------------------
+    setturtle :play1
+    if (distance (list :tar1_x :tar1_y)) < 10 [
+      make "check_co :check_co + 0.5
+      SetObject :play1 4 (:squ_size*2)*:check_co (list xcor ycor)
+      setheading :head1
+      ;----------------------------------------------------------
+      setturtle :i
+      colour_pos
+      setpos :pos_i
+      ;----------------------------------------------------------
+      clean
+      make "scop1 (word "Red_has_ :check_co "_points)
+      Write :score_1 4 :scop1 (list 250 -280)
+      ;-----------------------------------------------------------
+      box
+      grid
+      ;-----------------------------------------------------------
+      if (or :check_co>:Size :check_co=:Size)[
+        make "check_co 0
+        keyboardoff
+        ;---------------------------------------------------------
+        make "win_1 (word "Red_WON!)
+        make "1_cor ((count :win_1)/2)*:zx
+        Write 0 4 :win_1 (list -:1_cor 10) 
+      ]
+    ;-------------------------------------------------------------
+    ]
+  ]
+  ;---------------------------------------------------------------
+end
+
+to check2
+  ;---------------------------------------------------------------
+  ;Checking for the second Player
+  ;---------------------------------------------------------------
+  for [i 1 :targets 1] [
+    setturtle :i
+    make "tar2_x xcor
+    make "tar2_y ycor
+    ;-------------------------------------------------------------
+    setturtle :play2
+    if (distance (list :tar2_x :tar2_y)) < 10 [
+      make "check2_co :check2_co + 0.5
+      SetObject :play2 5 (:squ_size*2)*:check2_co (list xcor ycor)
+      setheading :head2
+      ;-----------------------------------------------------------
+      setturtle :i
+      colour_pos
+      Setpos :pos_i
+      ;-----------------------------------------------------------
+      clean
+      make "scop2 (word "Purple_has_ :check2_co "_points)
+      Write :score_2 5 :scop2 (list -400 280)
+      ;-----------------------------------------------------------
+      box
+      grid
+      ;-----------------------------------------------------------
+      if (or :check2_co>:Size :check2_co=:Size)[
+        make "check2_co 0
+        keyboardoff
+        ;---------------------------------------------------------
+        make "win_2 (word "Purple_WON!)
+        make "2_cor ((count :win_2)/2)*:zx
+        Write 0 5 :win_2 (list -:2_cor 10) 
+      ]
+    ;-------------------------------------------------------------
+    ]
+  ]
+  ;---------------------------------------------------------------
+end
+
+to colour_pos
+  ;--------------------------------
+  ;Choose color and position
+  ;--------------------------------
+  make "r random 255
+  make "g random 255
+  make "b random 255
+  make "x_i (random :wei*2)+(-:wei)
+  make "y_i (random :hei*2)+(-:hei)
+  ;--------------------------------
+  make "colour_i (list :r :g :b)
+  make "pos_i list :x_i :y_i
+  ;--------------------------------
+end
+
+to control
+  ;--------------------------------------------------------
+  ;Main game loop
+  ;--------------------------------------------------------
+  forever [
+    setturtle :play1
+    make "X xcor
+    make "Y ycor
+    make "wei_c :wei+(30-(:squ_size*2*:check_co))
+    make "hei_c :hei+(30-(:squ_size*2*:check_co))
+    ;------------------------------------------------------
+    if (and :X>-:wei_c :X<:wei_c :Y>-:hei_c :Y<:hei_c)[
+      check
+      if :check_co = 0[keyboardoff stop]
+      if not :check_co = 0[forward 5]
+    ]
+    ;------------------------------------------------------
+    if not (and :X>-:wei_c :X<:wei_c :Y>-:hei_c :Y<:hei_c)[
+      make "win_2 (word "Purple "_WON!)
+      make "1_cor ((count :win_2)/2)*:zx
+      Write 0 5 :win_2 (list -:1_cor 10) 
+      ;----------------------------------------------------
+      keyboardoff
+      stop
+    ]
+    ;------------------------------------------------------
+    ;------------------------------------------------------
+    setturtle :play2
+    make "x xcor
+    make "y ycor
+    make "wei_c :wei+(30-(:squ_size*2*:check2_co))
+    make "hei_c :hei+(30-(:squ_size*2*:check2_co))
+    ;------------------------------------------------------
+    if (and :x>-:wei_c :x<:wei_c :y>-:hei_c :y<:hei_c)[
+      check2
+      if :check2_co = 0[keyboardoff stop]
+      if not :check2_co = 0[forward 5]
+    ]
+    ;------------------------------------------------------
+    if not (and :x>-:wei_c :x<:wei_c :y>-:hei_c :y<:hei_c)[
+      make "win_1 (word "Red "_WON!)
+      make "2_cor ((count :win_1)/2)*:zx
+      Write 0 4 :win_1 (list -:2_cor 10) 
+      ;----------------------------------------------------
+      keyboardoff
+      stop
+    ]
+  ]
+  ;--------------------------------------------------------
+end
+
+to do
+  ;---------------------
+  ;Starting code
+  ;---------------------
+  setpencolor 0
+  setfloodcolor 0
+  right 90
+  ;---------------------
+  make "wei 440
+  make "hei 200
+  make "q 20
+  make "zx 10
+  ;---------------------
+  make "squ_size 10
+  make "targets 10
+  make "Size 5
+  ;---------------------
+  make "play1 :targets+1 ;11
+  make "play2 :targets+2 ;12
+  make "score_1 :play1+2 ;13
+  make "score_2 :play2+2 ;14
+  ;---------------------
+  make "check_co 1
+  make "check2_co 1
+  ;---------------------
+  make "head1 0
+  make "head2 0
+  ;---------------------
+  box
+  grid
+  ;---------------------
+  keyboardon [onkeydown]
+  ;---------------------
+end
+
+to grid
+  ;-------------------------------
+  ;code for making the grid
+  ;-------------------------------
+  make "times int (2*(:wei+40))/:q
+  repeat :times[
+    setpencolor (list 237 206 187)
+    setheading 0
+    forward 2*(:hei+40)
+    back 2*(:hei+40)
+    setheading 90
+    forward :q]
+  ;-------------------------------
+  setheading 0
+  make "times int (2*(:hei+40))/:q
+  repeat :times[
+    setpencolor (list 237 206 187)
+    setheading 270
+    forward 2*(:wei+40)
+    back 2*(:wei+40)
+    setheading 0
+    forward :q]
+  ;-------------------------------
+end
+
+to onkeydown
+  yield
+  ;---------------------------------
+  ;Code for the keys and ending code
+  ;---------------------------------
+  if keyboardvalue = ascii "t[
+    PressT] 
+  ;---------------------------------
+  if keyboardvalue = ascii "b[
+    control]
+  ;---------------------------------
+  setturtle :play1
+  ;---------------------------------
+  if keyboardvalue = ascii "w[
+    make "head1 0 
+    setheading 0]
+  if keyboardvalue = ascii "a[
+    make "head1 270 
+    setheading 270] 
+  if keyboardvalue = ascii "s[
+    make "head1 180
+    setheading 180]
+  if keyboardvalue = ascii "d[
+    make "head1 90
+    setheading 90]
+  ;---------------------------------
+  setturtle :play2
+  ;---------------------------------
+  if keyboardvalue = ascii "i[
+    make "head2 0
+    setheading 0]
+  if keyboardvalue = ascii "j[
+    make "head2 270
+    setheading 270] 
+  if keyboardvalue = ascii "k[
+    make "head2 180
+    setheading 180]
+  if keyboardvalue = ascii "l[
+    make "head2 90
+    setheading 90]
+  ;---------------------------------
+end
+
+to PressT
+  ;-----------------------------------------
+  ;Begining key function 
+  ;-----------------------------------------
+  for [i 1 :targets 1] [
+    colour_pos
+    SetObject :i :colour_i :squ_size :pos_i]
+  ;-----------------------------------------
+  SetObject :play1 4 :squ_size*2 [0 0]
+  SetObject :play2 5 :squ_size*2 [0 0]
+  ;-----------------------------------------
+end
+
+to SetObject :ind :color :len :posi
+  ;----------------------------------------
+  ;Making an object
+  ;----------------------------------------
+  setturtle :ind
+  penup setpos list 0 -:hei-50-:len pendown
+  ;----------------------------------------
+  setpencolor :color
+  setfloodcolor :color
+  setheading 0
+  ;----------------------------------------
+  repeat 4[forward :len right 90]
+  penup 
+  right 45 forward 2 
+  (fill "true)
+  back 2 left 45
+  ;----------------------------------------
+  setbitindex :ind
+  bitcut :len+1 :len+1
+  bitmapturtle
+  ;----------------------------------------
+  setpos :posi
+  ;----------------------------------------
+end 
+
+to Write :ino :color :word_score :pos_w
+  ;-------------------------------
+  ;Make a writing
+  ;-------------------------------
+  setturtle :ino
+  hideturtle
+  penup setpos :pos_w pendown 
+  ;-------------------------------
+  setpencolor :color
+  setfloodcolor :color
+  ;-------------------------------
+  setheading 90
+  label :word_score
+  ;-------------------------------
+end
+

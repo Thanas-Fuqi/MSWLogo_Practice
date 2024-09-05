@@ -1,0 +1,71 @@
+to do
+  setpencolor 0
+  right 90
+
+  make "kalim 0.001
+  make "begin_p -9
+  make "max_p 1
+  make "sep 20
+  make "max_num 16
+
+  setpensize [1 1]
+  penup
+  setpos list -:sep*:max_num -:sep*:max_num
+  pendown
+  repeat :max_num*2[
+    setheading 90
+    forward :sep*:max_num*2
+    back :sep*:max_num*2
+    setheading 0
+    forward :sep
+  ]
+
+  repeat :max_num*2[
+    setheading 180
+    forward :sep*:max_num*2
+    back :sep*:max_num*2
+    setheading 90
+    forward :sep
+  ]
+
+  penup
+  setpos list 0 0
+  pendown
+
+  setpensize [5 5]
+  repeat 2[
+    for [i 0 :max_num 1] [
+      setpos list 0 0
+      forward :i*:sep
+      label :i
+    ]
+    left 90
+  ]
+
+  repeat 2[
+    for [j 0 :max_num 1] [
+      setpos list 0 0
+      forward :j*:sep
+      label -:j
+    ]
+    left 90
+  ]
+
+  setpensize [3 3]
+  setpencolor 1
+
+  funky :begin_p
+  penup
+  setpos list :sep*:begin_p :y*:sep
+  pendown
+  make "begin_p :begin_p+:kalim
+  while [:begin_p < :max_p] [
+    make "begin_p :begin_p+:kalim
+    funky :begin_p
+    setpos list :sep*:begin_p :y*:sep
+  ]
+end
+
+to funky :x
+  make "y :x*:x + 8*:x + 1 
+end

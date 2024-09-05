@@ -1,0 +1,44 @@
+to do
+  hideturtle
+  make "A 0
+  make "B 0
+  make "C 0
+  make "D 0
+  make "E 0
+  make "F 0
+
+  setscreencolor 0
+  make "h {6 3}@0
+
+  repeat 1000000000[
+    make "d 25
+
+    for [i 1 20 1] [
+      make "d :d+5
+      setpencolor item modulo :i 2 :h
+
+      forward :d
+      right :A
+      forward :d
+      right :B
+      forward :d
+      right :C
+      forward :d
+      right :D
+      forward :d
+      right :E
+      forward :d
+      right :F
+    ]
+    penup home pendown
+    cs
+
+    make "A :A+1
+    make "B :B+1
+    make "C :C+1
+    make "D :D+1
+    make "E :E+1
+    make "F :F+1
+  ]
+  showturtle
+end
